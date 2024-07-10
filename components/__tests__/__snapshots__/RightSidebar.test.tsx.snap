@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RightSidebar should render RightSidebar successfully 1`] = `
+<div>
+  <div
+    class="css-9pknlg"
+    data-testid="right-sidebar"
+  />
+</div>
+`;
