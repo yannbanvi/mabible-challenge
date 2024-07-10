@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ChakraProviders } from "./providers";
+import { Flex } from "@chakra-ui/react";
+import RightSidebar from "@/components/RightSidebar";
+import LeftNavigationSidebar from "@/components/navigation/LeftNavigationSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +20,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ChakraProviders>
+          <Flex 
+            h='100vh'
+            overflow='hidden'
+            maxW='100%'
+            justify='center'
+            backgroundColor='#FAFAFB'
+          >
+            <LeftNavigationSidebar />
+            <Flex minW='830px' grow={1}>
+              {children}
+            </Flex>
+            <RightSidebar />
+          </Flex>
+        </ChakraProviders>
+      </body>
     </html>
   );
 }
