@@ -1,6 +1,6 @@
 export default function Notes() {
     return (
-      <main>
+      <main data-testid='notes-page'>
         <h1>Notes</h1>
       </main>
     );
