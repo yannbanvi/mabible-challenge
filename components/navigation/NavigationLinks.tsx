@@ -22,13 +22,12 @@ function NavigationLinks({ navigationLinks, title = ''}: NavigationLinksProps) {
         </Box>
       )}
       {navigationLinks?.map((link, index) => (
-        <Box paddingInline="12px" paddingBlock="8px">
+        <Box key={link.url} paddingInline="12px" paddingBlock="8px">
           <NavLink
-            key={index}
             url={link.url}
             title={link.title}
             icon={link.icon}
-            isActive={pathname === link.url}
+            isActive={pathname === link.url || (pathname.indexOf(link.url) !== -1 && link.url !== '/')}
           />
         </Box>
       ))}
