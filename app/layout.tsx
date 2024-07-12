@@ -25,12 +25,11 @@ export default function RootLayout({
           <Flex 
             h='100vh'
             overflow='hidden'
-            maxW='100%'
             justify='center'
             backgroundColor='#FAFAFB'
           >
             <LeftNavigationSidebar />
-            <Flex minW='830px' grow={1}>
+            <Flex maxW='830px' grow={1}>
               {children}
             </Flex>
             <RightSidebar />

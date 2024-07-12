@@ -157,7 +157,7 @@ const LeftNavigationSidebar = () => {
         {/* Navigation menu - second section */}
         {< NavigationLinks navigationLinks={navigationLinksData.secondSection} title='Mes activités' />}
 
-        <Spacer />
+        <Spacer flexGrow={1} />
 
         <Divider color="#ECECEE" />
 

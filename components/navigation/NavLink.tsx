@@ -12,16 +12,14 @@ function NavLink({ url, title, icon, isActive }: NavLinkProps) {
       }
     : {};
   return (
-    <Box paddingInline="12px" paddingBlock="8px" {...activeProps}>
-      <Link href={url} aria-label={title}>
-        <Flex gap={4} align="center">
-          {React.cloneElement(icon, { isActive: isActive })}
-          <Text fontSize={16} fontWeight={600} lineHeight="19px">
-            {title}
-          </Text>
-        </Flex>
-      </Link>
-    </Box>
+    <Link href={url} aria-label={title}>
+      <Flex gap={4} align="center">
+        {React.cloneElement(icon, { isActive: isActive })}
+        <Text fontSize={16} fontWeight={600} lineHeight="19px">
+          {title}
+        </Text>
+      </Flex>
+    </Link>
   );
 }
 

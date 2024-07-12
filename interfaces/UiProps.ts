@@ -1,4 +1,12 @@
 
+export interface NoteInterface {
+    id: string;
+    title: string;
+    body: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface NavLinkProps {
     url: string;
     title: string;
@@ -13,4 +21,12 @@ export interface NavigationLinksProps {
 
 export interface IconProps {
     isActive?: boolean;
+}
+
+export interface NoteItemProps {
+    note: NoteInterface;
+}
+
+export interface NotesProps {
+    notes: NoteInterface[];
 }
