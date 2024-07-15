@@ -1,7 +1,13 @@
-'use client';
+"use client";
+import { createNote, updateNote } from "@/actions/notesActions";
 import AddNoteBackButton from "@/components/AddNoteBackButton";
 import ResizableTextarea from "@/components/forms/ResizableTextarea";
 import { DotsIcon } from "@/components/icons";
+import NoteTitleIcon from "@/components/icons/NoteTitleIcon";
+import UndoForwardIcon from "@/components/icons/UndoForwardIcon";
+import UndoIcon from "@/components/icons/UndoIcon";
+import { NoteInterface } from "@/interfaces/UiProps";
+import isEmpty from "@/utils/isEmpty";
 import {
   Flex,
   Input,
@@ -10,96 +16,87 @@ import {
   Box,
   Spacer,
   Button,
+  useToast,
+  Spinner,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState, useTransition } from "react";
 
 function CreateNote() {
-  const undoIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-    >
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M0.861289 6.29359C0.861289 5.83291 1.23474 5.45945 1.69543 5.45945H12.884C15.708 5.45945 18 7.75142 18 10.5755C18 13.3995 15.708 15.6915 12.884 15.6915C12.4233 15.6915 12.0498 15.3181 12.0498 14.8574C12.0498 14.3967 12.4233 14.0233 12.884 14.0233C14.7867 14.0233 16.3317 12.4782 16.3317 10.5755C16.3317 8.67278 14.7867 7.12772 12.884 7.12772H1.69543C1.23474 7.12772 0.861289 6.75427 0.861289 6.29359Z"
-        fill="#A1A1AA"
-      />
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M4.60421 2.55012C4.93332 2.87248 4.9388 3.4006 4.61644 3.72971L2.0062 6.39462L4.61189 9.01396C4.93679 9.34056 4.93541 9.8687 4.60882 10.1936C4.28222 10.5185 3.75407 10.5171 3.42917 10.1905L0.242775 6.98744C-0.0791472 6.66383 -0.0811716 6.14157 0.238232 5.81548L3.42463 2.56235C3.74699 2.23324 4.2751 2.22776 4.60421 2.55012Z"
-        fill="#A1A1AA"
-      />
-    </svg>
-  );
+  const [titleInputValue, setTitleInputValue] = useState("");
+  const [bodyInputValue, setBodyInputValue] = useState("");
+  const [newlyCreatedNote, setNewlyCreatedNote] =
+    useState<NoteInterface | null>(null);
 
-  const undoForwardIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-    >
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M17.1387 6.29359C17.1387 5.83291 16.7653 5.45945 16.3046 5.45945H5.11603C2.29197 5.45945 0 7.75142 0 10.5755C0 13.3995 2.29196 15.6915 5.11603 15.6915C5.57671 15.6915 5.95017 15.3181 5.95017 14.8574C5.95017 14.3967 5.57671 14.0233 5.11603 14.0233C3.21333 14.0233 1.66827 12.4782 1.66827 10.5755C1.66827 8.67278 3.21333 7.12772 5.11603 7.12772H16.3046C16.7653 7.12772 17.1387 6.75427 17.1387 6.29359Z"
-        fill="#7F7B83"
-      />
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M13.3958 2.55012C13.0667 2.87248 13.0612 3.4006 13.3836 3.72971L15.9938 6.39462L13.3881 9.01396C13.0632 9.34056 13.0646 9.8687 13.3912 10.1936C13.7178 10.5185 14.2459 10.5171 14.5708 10.1905L17.7572 6.98744C18.0791 6.66383 18.0812 6.14157 17.7618 5.81548L14.5754 2.56235C14.253 2.23324 13.7249 2.22776 13.3958 2.55012Z"
-        fill="#7F7B83"
-      />
-    </svg>
-  );
+  let [isPending, startTransition] = useTransition();
+  const toast = useToast();
 
-  const noteIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-    >
-      <rect x="1" y="1" width="16" height="16" rx="4" fill="#49FF66" />
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M5.51327 1.62994C3.43383 1.62994 1.74811 3.31567 1.74811 5.39511V12.6049C1.74811 14.6843 3.43383 16.3701 5.51327 16.3701H12.484C14.5634 16.3701 16.2492 14.6843 16.2492 12.6049V5.39511C16.2492 3.31567 14.5634 1.62994 12.484 1.62994H5.51327ZM0.118164 5.39511C0.118164 2.41547 2.53364 0 5.51327 0H12.484C15.4636 0 17.8791 2.41547 17.8791 5.39511V12.6049C17.8791 15.5845 15.4636 18 12.484 18H5.51327C2.53364 18 0.118164 15.5845 0.118164 12.6049V5.39511Z"
-        fill="#211B28"
-      />
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M3.08941 4.96199C3.08941 4.51189 3.45429 4.14702 3.90438 4.14702H13.5917C14.0418 4.14702 14.4066 4.51189 14.4066 4.96199C14.4066 5.41208 14.0418 5.77696 13.5917 5.77696H3.90438C3.45429 5.77696 3.08941 5.41208 3.08941 4.96199Z"
-        fill="#211B28"
-      />
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M3.08941 8.71849C3.08941 8.2684 3.45429 7.90352 3.90438 7.90352H13.5917C14.0418 7.90352 14.4066 8.2684 14.4066 8.71849C14.4066 9.16859 14.0418 9.53347 13.5917 9.53347H3.90438C3.45429 9.53347 3.08941 9.16859 3.08941 8.71849Z"
-        fill="#211B28"
-      />
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M3.08941 12.4792C3.08941 12.0292 3.45429 11.6643 3.90438 11.6643H8.74532C9.19541 11.6643 9.56029 12.0292 9.56029 12.4792C9.56029 12.9293 9.19541 13.2942 8.74532 13.2942H3.90438C3.45429 13.2942 3.08941 12.9293 3.08941 12.4792Z"
-        fill="#211B28"
-      />
-    </svg>
-  );
+  const addNote = async () => {
+    if (isEmpty(titleInputValue) || isEmpty(bodyInputValue)) {
+      toast({
+        title: "La note ne peut pas être ajoutée.",
+        description:
+          "Le titre ou le corps de la note ne peuvent pas être vides.",
+        status: "warning",
+        duration: 9000,
+        variant: "subtle",
+        isClosable: true,
+      });
+      return;
+    }
+    const createdAt = new Date();
+    const note: NoteInterface = {
+      title: titleInputValue,
+      body: bodyInputValue,
+      createdAt: createdAt,
+      updatedAt: createdAt,
+    };
+    try {
+      startTransition(async () => {
+        const createdNote = await createNote(note);
+        setNewlyCreatedNote(createdNote);
+        console.log("Note created:", createdNote);
+      });
+    } catch (error) {
+      toast({
+        title: "Oups.",
+        description:
+          "Nous rencontrons une erreur lors de l'ajout de la note. Veuillez réessayer plus tard.",
+        status: "warning",
+        duration: 9000,
+        variant: "subtle",
+        isClosable: true,
+      });
+    }
+  };
+
+  const autoSaveNote = (
+    e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>,
+    property: 'title' | 'body'
+  ) => {
+    const newValue = e.target.value.trim();
+    if (
+      newValue.length === 0 ||
+      newlyCreatedNote === null ||
+      newlyCreatedNote === undefined
+    ) {
+      return;
+    }
+
+    if (
+      ['title', 'body'].includes(property) &&
+      newlyCreatedNote?.[property] !== newValue
+    ) {
+      // auto-save the changes
+      startTransition(async () => {
+        await updateNote(newlyCreatedNote?.$id ?? "", newlyCreatedNote);
+      });
+    }
+  };
 
   const headerSection = (
     <Flex grow={1} gap="8px" direction="row" align="center">
       <AddNoteBackButton />
-      {noteIcon}
+      <NoteTitleIcon />
       <Flex width={"100%"}>
         <Input
           fontWeight={800}
@@ -112,6 +109,9 @@ function CreateNote() {
           border="none"
           _focus={{ border: "none" }}
           _focusVisible={{ border: "none" }}
+          value={titleInputValue}
+          onChange={(e) => setTitleInputValue(e.target.value)}
+          onBlur={(e) => autoSaveNote(e, "title")}
         />
       </Flex>
       <IconButton
@@ -127,7 +127,7 @@ function CreateNote() {
     <Flex
       direction={"column"}
       w="100%"
-      style={{ position: "relative" }}
+      style={{ position: "relative", height: "100vh" }}
       data-testid="notes-page"
     >
       <Flex
@@ -147,7 +147,11 @@ function CreateNote() {
         direction={"column"}
         grow={1}
       >
-        <ResizableTextarea />
+        <ResizableTextarea
+          value={bodyInputValue}
+          onBlur={(e) => autoSaveNote(e, "body")}
+          onChange={(e) => setBodyInputValue(e.target.value)}
+        />
       </Flex>
       <Flex
         height={"58px"}
@@ -187,19 +191,55 @@ function CreateNote() {
             backgroundColor={"transparent"}
             border={"none"}
             aria-label="Undo"
-            icon={undoIcon}
+            icon={<UndoIcon />}
           />
           <IconButton
             backgroundColor={"transparent"}
             border={"none"}
             aria-label="Undo forward"
-            icon={undoForwardIcon}
+            icon={<UndoForwardIcon />}
           />
         </Flex>
         <Spacer />
-        <Button colorScheme="purple" borderRadius={"10px"}>
-          OK
-        </Button>
+        {!newlyCreatedNote && (
+          <Button
+            onClick={addNote}
+            colorScheme="purple"
+            borderRadius={"10px"}
+            isLoading={isPending}
+            loadingText="Enregistrement en cours..."
+          >
+            Enregistrer
+          </Button>
+        )}
+        {newlyCreatedNote && (
+          <Flex align={"center"}>
+            {isPending && (
+              <Flex align={"center"}>
+                <Spinner size="sm" color={'#770FFF'} />
+                <Text
+                  fontSize={"14px"}
+                  fontWeight={500}
+                  lineHeight={"17px"}
+                  color={"#727280"}
+                  marginLeft="4px"
+                >
+                  Enregistrement en cours...
+                </Text>
+              </Flex>
+            )}
+            {!isPending && (
+              <Text
+                fontSize={"14px"}
+                fontWeight={500}
+                lineHeight={"17px"}
+                color={"#727280"}
+              >
+                Modifié: {newlyCreatedNote?.updatedAt?.toLocaleString()}
+              </Text>
+            )}
+          </Flex>
+        )}
       </Flex>
     </Flex>
   );
