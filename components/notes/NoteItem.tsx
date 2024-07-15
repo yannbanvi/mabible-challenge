@@ -1,5 +1,6 @@
+'use client';
+
 import {
-  Badge,
   Box,
   Flex,
   IconButton,
@@ -14,7 +15,8 @@ import React from "react";
 import { DotsIcon, SupprimerIcon } from "../icons";
 import { NoteItemProps } from "@/interfaces/UiProps";
 
-function NoteItem({ note }: NoteItemProps) {
+function NoteItem({ note, onDeleteNote }: NoteItemProps) {
+
   return (
     <Flex
       role="group"
@@ -30,14 +32,6 @@ function NoteItem({ note }: NoteItemProps) {
           <Text fontWeight={700} lineHeight="17px" fontSize="14px">
             { note?.title }
           </Text>
-          {/* <Badge
-            backgroundColor="#ECECEE"
-            paddingInline="6px"
-            height="16px"
-            borderRadius={30}
-          >
-            BDS
-          </Badge> */}
         </Flex>
         <Flex direction="row" align="center" gap="4px">
           <Text
@@ -72,6 +66,7 @@ function NoteItem({ note }: NoteItemProps) {
                   _hover={{ backgroundColor: "transparent" }}
                   _focus={{ backgroundColor: "transparent" }}
                   icon={<SupprimerIcon />}
+                  onClick={() => onDeleteNote(note?.$id as string)}
                 >
                   Supprimer
                 </MenuItem>

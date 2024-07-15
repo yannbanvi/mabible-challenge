@@ -25,6 +25,7 @@ export interface IconProps {
 
 export interface NoteItemProps {
     note: NoteInterface;
+    onDeleteNote: (id: string) => void;
 }
 
 export interface NotesProps {

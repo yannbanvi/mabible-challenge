@@ -1,3 +1,5 @@
+'use client';
+
 import { fetchNotes } from "@/actions/notesActions";
 import AddPlusIconButton from "@/components/AddPlusIconButton";
 import {
@@ -6,7 +8,7 @@ import {
 } from "@/components/icons";
 import NoNotesPlaceholder from "@/components/NoNotesPlaceholder";
 import Notes from "@/components/notes/Notes";
-import { NoteInterface } from "@/interfaces/UiProps";
+import { useNotes } from "@/context/noteContext";
 import {
   Box,
   Flex,
@@ -16,14 +18,23 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-export default async function NotesPage() {
+import { useEffect } from "react";
+export default function NotesPage() {
 
-  let notes: NoteInterface[] = [];
-  try {
-    notes = await fetchNotes();
-  } catch (error) {
-    console.error(error);
+  const { updateNotes, notes, shouldRefreshNotes } = useNotes();
+  
+  const fetchData = async () => {
+    try {
+      const responseData = await fetchNotes();
+      updateNotes(responseData);
+    } catch (error) {
+      console.error(error);
+    }
   }
+
+  useEffect(() => {
+    fetchData();
+  }, [shouldRefreshNotes]);
 
   const pageTitle = (
     <Flex gap="8px" direction="row" align="center">
@@ -33,6 +44,7 @@ export default async function NotesPage() {
       </Text>
     </Flex>
   );
+  
   const searchBox = (
     <Box>
       <InputGroup>
@@ -58,6 +70,7 @@ export default async function NotesPage() {
       </InputGroup>
     </Box>
   );
+
   return (
     <Stack w="100%" spacing={0} style={{ position: 'relative' }} data-testid="notes-page">
       <Flex
