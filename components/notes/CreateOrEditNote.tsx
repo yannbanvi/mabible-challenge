@@ -32,7 +32,7 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
   const toast = useToast();
 
   const addNote = async () => {
-    if (isEmpty(titleInputValue) || isEmpty(bodyInputValue)) {
+    if (isEmpty(titleInputValue as string) || isEmpty(bodyInputValue as string)) {
       toast({
         title: "La note ne peut pas être ajoutée.",
         description:
@@ -46,8 +46,8 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
     }
     const createdAt = new Date();
     const note: NoteInterface = {
-      title: titleInputValue,
-      body: bodyInputValue,
+      title: titleInputValue as string,
+      body: bodyInputValue as string,
       createdAt: createdAt,
       updatedAt: createdAt,
     };
@@ -55,7 +55,6 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
       startTransition(async () => {
         const createdNote = await createNote(note);
         setNewlyCreatedNote(createdNote);
-        console.log("Note created:", createdNote);
       });
     } catch (error) {
       toast({

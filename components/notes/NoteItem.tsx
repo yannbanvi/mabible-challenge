@@ -11,12 +11,36 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { LegacyRef, useLayoutEffect, useRef, useState } from "react";
 import { DotsIcon, SupprimerIcon } from "../icons";
 import { NoteItemProps } from "@/interfaces/UiProps";
+import { useSearchParams } from "next/navigation";
 
 function NoteItem({ note, onDeleteNote }: NoteItemProps) {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("search") || "";
+  const regex = new RegExp(query, 'ig');
+  const [title, setTitle] = useState<any>(null);
+  const [body, setBody] = useState<any>(null);
 
+  const stylingSearchQueryString = () => {
+    let title = note?.title;
+    let body = note?.body;
+    if (title?.toLowerCase().includes(query?.toLowerCase())) {
+      title = title?.replaceAll(regex, `<span style="color: #770FFF">${query}</span>`) 
+    } 
+    setTitle(title);
+
+    if (body?.toLowerCase().includes(query?.toLowerCase())) {
+      body = body?.replaceAll(regex, `<span style="color: #770FFF; font-weight: 700;">${query}</span>`, );
+    } 
+    setBody(body);
+  }
+
+  useLayoutEffect(() => {
+    stylingSearchQueryString();
+  }, [query]);
+  
   return (
     <Flex
       role="group"
@@ -29,9 +53,14 @@ function NoteItem({ note, onDeleteNote }: NoteItemProps) {
     >
       <Flex direction="row" align="center" justify="space-between">
         <Flex align="center" paddingBlock="8.5px" gap="8px">
-          <Text fontWeight={700} lineHeight="17px" fontSize="14px">
-            { note?.title }
-          </Text>
+          <Text 
+            fontWeight={700} 
+            lineHeight="17px" 
+            fontSize="14px"
+            dangerouslySetInnerHTML={{
+              __html: title,
+            }}
+          />
         </Flex>
         <Flex direction="row" align="center" gap="4px">
           <Text
@@ -76,9 +105,14 @@ function NoteItem({ note, onDeleteNote }: NoteItemProps) {
         </Flex>
       </Flex>
       <Flex as={Link} href={`/notes/${note?.$id}`} _hover={{ textDecoration: 'none' }}>
-        <Text fontWeight={400} lineHeight="20px" fontSize="14px">
-          { note?.body }
-        </Text>
+        <Text 
+          fontWeight={400} 
+          lineHeight="20px" 
+          fontSize="14px"
+          dangerouslySetInnerHTML={{
+            __html: body,
+          }}
+          />
       </Flex>
     </Flex>
   );
