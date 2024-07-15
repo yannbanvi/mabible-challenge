@@ -6,10 +6,20 @@ import React from "react";
 import NoteItem from "./NoteItem";
 import { deleteNote } from "@/actions/notesActions";
 import { useNotes } from "@/context/noteContext";
+import { useRouter } from "next/navigation";
 
 function Notes({ notes }: NotesProps) {
   const toast = useToast();
+  const router = useRouter();
+  const { selectNote } = useNotes();
   const { updateShouldRefreshNotes } = useNotes();
+
+  const onNoteItemClick = (note: NoteInterface) => {
+    if (!note) return;
+    const url = `/notes/${note?.$id}`;
+    selectNote(note);
+    router.push(url);
+  };
 
   const onDeleteNoteClick = async (id: string) => {
     if (!id) return;
@@ -43,6 +53,7 @@ function Notes({ notes }: NotesProps) {
           key={note?.$id}
           note={note}
           onDeleteNote={onDeleteNoteClick}
+          onNoteItemClick={onNoteItemClick}
         />
       ))}
       ;

@@ -35,6 +35,7 @@ export async function updateNote(id: string, note: NoteInterface) {
         updatedAt: new Date(),
         createdAt: note?.createdAt,
     };
+    console.log("Updated note:", editedNote);
     try {
         const response = await database.updateDocument(
             process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID as string,
@@ -83,5 +84,22 @@ export async function fetchNotes() {
     } catch (error) {
         console.error("Error fetching note:", error);
         throw new Error("Failed to fetch notes");
+    }
+};
+
+export async function fetchNote(id: string) {
+    try {
+        const response = await database.getDocument(
+            process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID as string,
+            TABLE_NAME,
+            id,
+        );
+    /* Cette convertion est utile car elle permet de reduire le nombre d'information renvoyées au client.
+     * Nous choisissons de conserver uniquement les champs nécessaires pour les notes et soustraire les informations sensibles.
+    */
+    return convertToNoteClientData(response);
+    } catch (error) {
+        console.error("Failed to fetch note with provided ID: " + id, error);
+        throw new Error("Failed to fetch note with provided ID: " + id);
     }
 };
