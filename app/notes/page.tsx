@@ -18,7 +18,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 export default function NotesPage() {
 
   const { updateNotes, notes, shouldRefreshNotes } = useNotes();
@@ -32,7 +32,7 @@ export default function NotesPage() {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchData();
   }, [shouldRefreshNotes]);
 
@@ -44,7 +44,7 @@ export default function NotesPage() {
       </Text>
     </Flex>
   );
-  
+
   const searchBox = (
     <Box>
       <InputGroup>

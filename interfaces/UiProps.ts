@@ -31,3 +31,7 @@ export interface NoteItemProps {
 export interface NotesProps {
     notes: NoteInterface[];
 }
+
+export interface CreateOrEditNoteProps {
+    note?: NoteInterface;
+}
