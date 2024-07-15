@@ -5,6 +5,7 @@ import { ChakraProviders } from "./providers";
 import { Flex } from "@chakra-ui/react";
 import RightSidebar from "@/components/RightSidebar";
 import LeftNavigationSidebar from "@/components/navigation/LeftNavigationSidebar";
+import { NoteContextProvider } from "@/context/noteContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,22 +21,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ChakraProviders>
-          <Flex 
-            h='100vh'
-            overflow='hidden'
-            justify='center'
-            backgroundColor='#FAFAFB'
-          >
-            <LeftNavigationSidebar />
-            <Flex maxW='830px' grow={1}>
-              {children}
+      <NoteContextProvider>
+        <body className={inter.className}>
+          <ChakraProviders>
+            <Flex 
+              h='100vh'
+              overflow='hidden'
+              justify='center'
+              backgroundColor='#FAFAFB'
+            >
+              <LeftNavigationSidebar />
+              <Flex maxW='830px' grow={1}>
+                {children}
+              </Flex>
+              <RightSidebar />
             </Flex>
-            <RightSidebar />
-          </Flex>
-        </ChakraProviders>
-      </body>
+          </ChakraProviders>
+        </body>
+      </NoteContextProvider>
     </html>
   );
 }
