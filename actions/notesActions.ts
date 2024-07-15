@@ -3,7 +3,7 @@
 import { NoteInterface } from "@/interfaces/UiProps";
 import client from "@/lib/appwrite_client";
 import convertToNoteClientData from "@/utils/convertToNoteClientData";
-import { Databases, ID } from "appwrite";
+import { Databases, ID, Query } from "appwrite";
 
 const TABLE_NAME = "notes";
 const database = new Databases(client);
@@ -45,6 +45,23 @@ export async function updateNote(id: string, note: NoteInterface) {
      * Nous choisissons de conserver uniquement les champs nécessaires pour les notes et soustraire les informations sensibles.
     */
     return convertToNoteClientData(response);
+    } catch (error) {
+        console.error("Error updating note:", error);
+        throw new Error("Failed to update note");
+    }
+};
+
+export async function fetchNotes() {
+    try {
+        const response = await database.listDocuments(
+            process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID as string,
+            TABLE_NAME,
+            [Query.orderDesc('$createdAt')]
+        );
+    /* Cette convertion est utile car elle permet de reduire le nombre d'information renvoyées au client.
+     * Nous choisissons de conserver uniquement les champs nécessaires pour les notes et soustraire les informations sensibles.
+    */
+    return response.documents.map(convertToNoteClientData);
     } catch (error) {
         console.error("Error updating note:", error);
         throw new Error("Failed to update note");
