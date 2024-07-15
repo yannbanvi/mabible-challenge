@@ -30,14 +30,14 @@ function NoteItem({ note }: NoteItemProps) {
           <Text fontWeight={700} lineHeight="17px" fontSize="14px">
             { note?.title }
           </Text>
-          <Badge
+          {/* <Badge
             backgroundColor="#ECECEE"
             paddingInline="6px"
             height="16px"
             borderRadius={30}
           >
             BDS
-          </Badge>
+          </Badge> */}
         </Flex>
         <Flex direction="row" align="center" gap="4px">
           <Text
@@ -80,7 +80,7 @@ function NoteItem({ note }: NoteItemProps) {
           </Box>
         </Flex>
       </Flex>
-      <Flex as={Link} href="/list/one" _hover={{ textDecoration: 'none' }}>
+      <Flex as={Link} href={`/notes/${note?.$id}`} _hover={{ textDecoration: 'none' }}>
         <Text fontWeight={400} lineHeight="20px" fontSize="14px">
           { note?.body }
         </Text>

@@ -1,9 +1,10 @@
+import { fetchNotes } from "@/actions/notesActions";
 import AddPlusIconButton from "@/components/AddPlusIconButton";
 import {
   NoteIcon,
-  NotePlaceholderIcon,
   RechercheIcon,
 } from "@/components/icons";
+import NoNotesPlaceholder from "@/components/NoNotesPlaceholder";
 import Notes from "@/components/notes/Notes";
 import { NoteInterface } from "@/interfaces/UiProps";
 import {
@@ -15,7 +16,15 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-export default function NotesPage() {
+export default async function NotesPage() {
+
+  let notes: NoteInterface[] = [];
+  try {
+    notes = await fetchNotes();
+  } catch (error) {
+    console.error(error);
+  }
+
   const pageTitle = (
     <Flex gap="8px" direction="row" align="center">
       <NoteIcon isActive />
@@ -49,53 +58,6 @@ export default function NotesPage() {
       </InputGroup>
     </Box>
   );
-  const noNotesPlaceHolder = (
-    <Flex
-      paddingInline="40px"
-      paddingBlock="40px"
-      justify="center"
-      align="center"
-      direction="column"
-      gap="12px"
-      borderBottom="1px solid #ECECEE"
-    >
-      <NotePlaceholderIcon />
-      <Text
-        w="160px"
-        align="center"
-        color="#727280"
-        fontWeight={500}
-        lineHeight="24px"
-        fontSize="16px"
-      >
-        Aucune note redigée pour le moment
-      </Text>
-    </Flex>
-  );
-
-
-  const notes: NoteInterface[] = [
-    {
-      title: "2 Thessaloniciens 3.1-3",
-      body: `La parole du Seigneur ne peut se propager sans être accompagnée de
-          prières ferventes pour que le saint esprit puisse toucher les coeurs
-          profondément et parler aux âmes qui reçoivent ce message. Il y a
-          beaucoup de...`,
-      createdAt: new Date("2022-01-01T10:00:00"),
-      id: "1",
-      updatedAt: new Date("2022-01-01T10:00:00"),
-    },
-    {
-      title: "2 Genesis 8.1",
-      body: `lorem ipsmu ferventes pour que le saint esprit puisse toucher les coeurs
-          profondément et parler aux âmes qui reçoivent ce message. Il y a
-          beaucoup...`,
-      createdAt: new Date("2023-01-01T10:00:00"),
-      id: "2",
-      updatedAt: new Date("2023-01-01T10:00:00"),
-    }
-  ];
-
   return (
     <Stack w="100%" spacing={0} style={{ position: 'relative' }} data-testid="notes-page">
       <Flex
@@ -110,7 +72,7 @@ export default function NotesPage() {
         {pageTitle}
         {searchBox}
       </Flex>
-      { notes?.length === 0 ? noNotesPlaceHolder : <Notes notes={notes} /> }
+      { notes?.length === 0 ? <NoNotesPlaceholder /> : <Notes notes={notes} /> }
       <span
         style={{
           zIndex: 99999,
