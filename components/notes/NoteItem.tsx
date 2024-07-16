@@ -10,8 +10,9 @@ import {
   MenuItem,
   MenuList,
   Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
-import React, { LegacyRef, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { DotsIcon, SupprimerIcon } from "../icons";
 import { NoteItemProps } from "@/interfaces/UiProps";
 import { useSearchParams } from "next/navigation";
@@ -20,10 +21,11 @@ function NoteItem({ note, onDeleteNote }: NoteItemProps) {
   const searchParams = useSearchParams();
   const query = searchParams.get("search") || "";
   const regex = new RegExp(query, 'ig');
+  const [isSmall] = useMediaQuery('(max-width: 30em)')
   const [title, setTitle] = useState<any>(null);
   const [body, setBody] = useState<any>(null);
 
-  const stylingSearchQueryString = () => {
+  const stylingSearchQueryString = useCallback(() => {
     let title = note?.title;
     let body = note?.body;
     if (title?.toLowerCase().includes(query?.toLowerCase())) {
@@ -35,16 +37,17 @@ function NoteItem({ note, onDeleteNote }: NoteItemProps) {
       body = body?.replaceAll(regex, `<span style="color: #770FFF; font-weight: 700;">${query}</span>`, );
     } 
     setBody(body);
-  }
+  }, [query, note?.title, note?.body]);
 
   useLayoutEffect(() => {
     stylingSearchQueryString();
-  }, [query]);
+  }, [stylingSearchQueryString]);
+
   
   return (
     <Flex
       role="group"
-      paddingInline="32px"
+      paddingInline={{ base: '20px', sm: '20px', md: '32px', lg: '32px', xl: '32px', '2xl': '32px',  }}
       paddingBlock="16px"
       _hover={{ backgroundColor: "#F5F5F7" }}
       borderBottom="1px solid #ECECEE"
@@ -52,7 +55,11 @@ function NoteItem({ note, onDeleteNote }: NoteItemProps) {
       gap="4px"
     >
       <Flex direction="row" align="center" justify="space-between">
-        <Flex align="center" paddingBlock="8.5px" gap="8px">
+        <Flex 
+          align="center" 
+          paddingBlock="8.5px" 
+          paddingRight={isSmall ? '16px' : '0px'}
+          gap="8px">
           <Text 
             fontWeight={700} 
             lineHeight="17px" 
@@ -79,8 +86,8 @@ function NoteItem({ note, onDeleteNote }: NoteItemProps) {
                 paddingInline="13px"
                 paddingBlock="7px"
                 borderRadius="34px"
-                backgroundColor="#E7E7EA"
-                visibility="hidden"
+                backgroundColor={isSmall ? 'transparent': '#E7E7EA'}
+                visibility={isSmall? 'visible' : "hidden"}
                 _groupHover={{ visibility: "visible" }}
                 _active={{ backgroundColor: "#E7E7EA" }}
                 _hover={{ backgroundColor: "#E7E7EA" }}

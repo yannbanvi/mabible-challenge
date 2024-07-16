@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 
 function NotesList({ notes }: NotesProps) {
   const toast = useToast();
-  const router = useRouter();
   const { updateShouldRefreshNotes } = useNotes();
 
   const onDeleteNoteClick = async (id: string) => {

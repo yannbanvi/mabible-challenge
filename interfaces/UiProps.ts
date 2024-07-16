@@ -9,14 +9,16 @@ export interface NoteInterface {
 
 export interface NavLinkProps {
     url: string;
-    title: string;
+    title?: string;
     icon: JSX.Element;
     isActive?: boolean;
+    onDrawerClick?: () => void;
 }
 
 export interface NavigationLinksProps {
     navigationLinks: NavLinkProps[];
     title?: string;
+    inDrawer?: boolean;
 }
 
 export interface IconProps {
@@ -34,4 +36,18 @@ export interface NotesProps {
 
 export interface CreateOrEditNoteProps {
     note?: NoteInterface;
+}
+
+export interface FooterSectionProps {
+    note?: NoteInterface;
+    addNote: () => void;
+    isPending: boolean;
+    sm?: boolean;
+}
+
+export interface CreateTextareaSectionProps {
+    inputValue: string;
+    onChange: (e: string) => void;
+    onBlur: (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>, property: 'title' | 'body') => void;
+    sm?: boolean;
 }
