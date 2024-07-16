@@ -13,7 +13,17 @@ import React from "react";
 import UndoForwardIcon from "../icons/UndoForwardIcon";
 import UndoIcon from "../icons/UndoIcon";
 import { FooterSectionProps } from "@/interfaces/UiProps";
+import ReactTimeAgo from "react-time-ago";
 
+{/** 
+* @component FooterSection
+  @Description A component for displaying the note footer.
+  @param {NoteInterface} note - The note being edited or created.
+  @param {boolean} isPending - A boolean indicating if the note is being saved.
+  @param {function} addNote - A callback function to add a new note.
+  @param {boolean} sm - A boolean indicating if the component should be displayed in small mode.
+  @returns {JSX.Element} - The FooterSection component.
+*/}
 function FooterSection({ note, isPending, addNote, sm }: FooterSectionProps) {
   const content = (
     <Flex
@@ -65,6 +75,7 @@ function FooterSection({ note, isPending, addNote, sm }: FooterSectionProps) {
         />
       </Flex>
       <Spacer />
+      {/** when note is not present we are on create mode so we render save button */}
       {!note && (
         <Button
           onClick={addNote}
@@ -77,8 +88,10 @@ function FooterSection({ note, isPending, addNote, sm }: FooterSectionProps) {
           Enregistrer
         </Button>
       )}
+      {/** when note is present we are on edit mode so we render autosave status text */}
       {note && (
         <Flex align={"center"}>
+          {/** While pending it shows a loading spinner along with the loading text */}
           {isPending && (
             <Flex align={"center"}>
               <Spinner size="sm" color={"#770FFF"} />
@@ -93,6 +106,7 @@ function FooterSection({ note, isPending, addNote, sm }: FooterSectionProps) {
               </Text>
             </Flex>
           )}
+          {/** While no more pending it shows a text with the last modified time */}
           {!isPending && (
             <Text
               fontSize={"14px"}
@@ -101,7 +115,7 @@ function FooterSection({ note, isPending, addNote, sm }: FooterSectionProps) {
               color={"#727280"}
               suppressHydrationWarning
             >
-              Modifié: {note?.updatedAt?.toLocaleString()}
+              Modifié: <ReactTimeAgo date={note?.updatedAt} locale="fr-FR"/>
             </Text>
           )}
         </Flex>

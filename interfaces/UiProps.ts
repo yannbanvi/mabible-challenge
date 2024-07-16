@@ -47,7 +47,6 @@ export interface FooterSectionProps {
 
 export interface CreateTextareaSectionProps {
     inputValue: string;
-    onChange: (e: string) => void;
-    onBlur: (e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>, property: 'title' | 'body') => void;
+    onChange: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
     sm?: boolean;
 }
