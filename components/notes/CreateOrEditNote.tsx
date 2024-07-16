@@ -5,32 +5,45 @@ import AddNoteBackButton from "@/components/AddNoteBackButton";
 import { DotsIcon } from "@/components/icons";
 import NoteTitleIcon from "@/components/icons/NoteTitleIcon";
 import { CreateOrEditNoteProps, NoteInterface } from "@/interfaces/UiProps";
+import useAutoSaveDebounce from "@/hooks/useAutoSaveDebounce";
 import isEmpty from "@/utils/isEmpty";
-import {
-  Flex,
-  Input,
-  IconButton,
-  useToast,
-  Show,
-} from "@chakra-ui/react";
-import React, { useState, useTransition } from "react";
+import { Flex, Input, IconButton, useToast, Show } from "@chakra-ui/react";
+import React, { useEffect, useState, useTransition } from "react";
 import FooterSection from "./FooterSection";
 import CreateTextareaSection from "./CreateTextareaSection";
 
+const DEBOUNCE_WAIT_DELAY = 800;
+
+{/** 
+* @component CreateOrEditNote
+  @description A component for creating or editing a note.
+  @param {NoteInterface} note (optional) - The note to be edited. 
+*/}
 function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
   const [newlyCreatedNote, setNewlyCreatedNote] =
     useState<NoteInterface | null>(note as NoteInterface);
   const [titleInputValue, setTitleInputValue] = useState(note?.title);
   const [bodyInputValue, setBodyInputValue] = useState(note?.body);
 
+  const debounceAutoSave = useAutoSaveDebounce(
+    {
+      ...(note as NoteInterface),
+      title: titleInputValue as string,
+      body: bodyInputValue as string,
+    },
+    DEBOUNCE_WAIT_DELAY
+  );
+
   let [isPending, startTransition] = useTransition();
   const toast = useToast();
 
   const addNote = async () => {
+    // If the title or body are empty, display a warning message and stop the execution.
     if (
       isEmpty(titleInputValue as string) ||
       isEmpty(bodyInputValue as string)
     ) {
+      // Display a warning message and stop the execution.
       toast({
         title: "La note ne peut pas être ajoutée.",
         description:
@@ -50,11 +63,13 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
       updatedAt: createdAt,
     };
     try {
+      // Here we create the note and update the newlyCreatedNote state with the returned note.
       startTransition(async () => {
         const createdNote = await createNote(note);
         setNewlyCreatedNote(createdNote);
       });
     } catch (error) {
+      // Display a warning message.
       toast({
         title: "Oups.",
         description:
@@ -66,32 +81,38 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
       });
     }
   };
+  /**
+   * This function save the changes on the note automatically.
+   * It uses the useAutoSaveDebounce hook to debounce the save operation.
+   */
+  const autoSaveNote = () => {
+    // If the note title or body have not been changed, do nothing.
+    if (titleInputValue === note?.title && bodyInputValue === note?.body)
+      return;
 
-  const autoSaveNote = (
-    e: React.FocusEvent<HTMLTextAreaElement | HTMLInputElement>,
-    property: "title" | "body"
-  ) => {
-    const newValue = e.target.value.trim();
-    if (
-      newValue.length === 0 ||
-      newlyCreatedNote === null ||
-      newlyCreatedNote === undefined
-    ) {
+    // If the title or body are empty, display a warning message and stop the execution.
+    if( titleInputValue === "" || bodyInputValue === "") {
+      toast({
+        title: "Oups.",
+        description:
+          "Veuillez remplir le titre et le corps de la note pour les sauvegarder",
+        status: "warning",
+        duration: 9000,
+        variant: "subtle",
+        isClosable: true,
+      });
       return;
     }
-
-    if (
-      ["title", "body"].includes(property) &&
-      newlyCreatedNote?.[property] !== newValue
-    ) {
-      // auto-save the changes
+    try {
       startTransition(async () => {
-        await updateNote(newlyCreatedNote?.$id ?? "", {
-          ...newlyCreatedNote,
-          [property]: newValue,
-          updatedAt: new Date(),
-        });
+        let updatedNote = await updateNote(
+          newlyCreatedNote?.$id ?? "",
+          debounceAutoSave
+        );
+        setNewlyCreatedNote(updatedNote);
       });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -114,8 +135,7 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
           _focus={{ border: "none" }}
           _focusVisible={{ border: "none" }}
           value={titleInputValue}
-          onChange={(e) => setTitleInputValue(e.target.value)}
-          onBlur={(e) => autoSaveNote(e, "title")}
+          onChange={(e) => setTitleInputValue(e.target.value as string)}
         />
       </Flex>
       <IconButton
@@ -127,9 +147,21 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
     </Flex>
   );
 
+  /**
+   * When the note is updated, we call the autoSaveNote function to save the changes.
+   */
+  useEffect(() => {
+    autoSaveNote();
+  }, [debounceAutoSave]);
+
   return (
     <>
+      {/** BLOCK only for mobile breakpoint */}
       <Show below="sm">
+        {/**
+         * BLOCK for the Header section
+         * BLOCk where the title input is displayed.
+         */}
         <Flex
           as="header"
           position="fixed"
@@ -152,21 +184,31 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
         >
           {headerSection}
         </Flex>
+
+        {/**
+         * BLOCK for the Content section
+         * BLOCk where the textarea of the note body is display.
+         */}
         <Flex width={"100%"} marginTop={"65px"}>
-          <CreateTextareaSection 
-            sm 
+          <CreateTextareaSection
+            sm
             inputValue={bodyInputValue as string}
-            onBlur={autoSaveNote}
-            onChange={setBodyInputValue}
+            onChange={(e) => setBodyInputValue(e.target.value as string)}
           />
         </Flex>
-        <FooterSection 
-            note={newlyCreatedNote as NoteInterface} 
-            addNote={addNote} 
-            isPending={isPending}
-            sm
-          />
+        {/**
+         * BLOCK for the Footer section
+         * BLOCk where date changes text and save note button are displayed .
+         */}
+        <FooterSection
+          note={newlyCreatedNote as NoteInterface}
+          addNote={addNote}
+          isPending={isPending}
+          sm
+        />
       </Show>
+
+      {/** BLOCK only for tablet, laptop and above */}
       <Show above="md">
         <Flex
           direction={"column"}
@@ -174,6 +216,10 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
           style={{ position: "relative", height: "100vh" }}
           data-testid="notes-page"
         >
+          {/**
+           * BLOCK for the Header section
+           * BLOCk where the title input is displayed.
+           */}
           <Flex
             direction="row"
             justify="space-between"
@@ -190,14 +236,17 @@ function CreateOrEditNote({ note }: CreateOrEditNoteProps) {
           >
             {headerSection}
           </Flex>
-          <CreateTextareaSection 
+          <CreateTextareaSection
             inputValue={bodyInputValue as string}
-            onBlur={autoSaveNote}
-            onChange={setBodyInputValue}
+            onChange={(e) => setBodyInputValue(e.target.value as string)}
           />
-          <FooterSection 
-            note={newlyCreatedNote as NoteInterface} 
-            addNote={addNote} 
+          {/**
+           * BLOCK for the Footer section
+           * BLOCk where date changes text and save note button are displayed .
+           */}
+          <FooterSection
+            note={newlyCreatedNote as NoteInterface}
+            addNote={addNote}
             isPending={isPending}
           />
         </Flex>

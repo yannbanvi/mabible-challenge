@@ -2,7 +2,10 @@ import React, { forwardRef } from "react";
 import { Textarea, TextareaProps } from "@chakra-ui/react";
 import TextareaAutosize from "react-textarea-autosize";
 
-
+/**
+ * @component ResizableTextarea
+ * @description A resizable textarea component using react-textarea-autosize.
+ */
 const ResizableTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (props, ref) => {
     return (

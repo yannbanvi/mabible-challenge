@@ -18,10 +18,12 @@
     "@emotion/styled": "^11.11.5",
     "appwrite": "^15.0.0",
     "framer-motion": "^11.2.14",
+    "javascript-time-ago": "^2.5.10",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
-    "react-textarea-autosize": "^8.5.3"
+    "react-textarea-autosize": "^8.5.3",
+    "react-time-ago": "^7.3.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",

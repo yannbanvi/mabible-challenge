@@ -6,14 +6,23 @@ import { EtiquetteIcon, FavoriIcon, HomeIcon, ListesIcon, MaBibleIcon, MediaIcon
 import MaBibleLogo from '../icons/MaBibleLogo';
 import { usePathname } from 'next/navigation';
 
+/**
+ * This function is responsible for rendering the navigation section for mobile devices.
+ * It includes a navigation drawer with menu items and a set of fixed menu items.
+ * The navigation drawer is triggered by a menu icon in the fixed menu items.
+ * The function conditionally renders the navigation drawer based on the current pathname.
+ *
+ * @returns {JSX.Element} - The JSX element representing the navigation section for mobile devices.
+ */
 function NavigationSectionForMobile() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const pathname = usePathname();
+  // if the current pathname is  "/notes/create", or "/notes/[id]", don't render the navigation for mobile
   const regex = new RegExp(/\/notes\/((create)|[a-z0-9]+)?/);
-
   if (pathname.match(regex)) {
     return null;
   }
+  // TODO: should refactor this
   const navigationLinksData = {
     firstSection: [
       {
@@ -76,8 +85,6 @@ function NavigationSectionForMobile() {
     ],
   };
 
-
-  
   return (
     <Flex h={'52px'}>
       {/* Navigation drawer for mobile only*/}

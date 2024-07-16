@@ -6,17 +6,30 @@ import React from "react";
 import NoteItem from "./NoteItem";
 import { deleteNote } from "@/actions/notesActions";
 import { useNotes } from "@/context/noteContext";
-import { useRouter } from "next/navigation";
 
+/**
+ * @component {NotesList} represents a list of notes
+ * @param {NoteInterface[]} notes - An array of NoteInterface objects representing the notes.
+ * @returns {JSX.Element} - The NotesList component.
+ */
 function NotesList({ notes }: NotesProps) {
   const toast = useToast();
   const { updateShouldRefreshNotes } = useNotes();
 
+  /**
+   * Handles the deletion of a note.
+   *
+   * @param id - The ID of the note to be deleted.
+   *
+   * @returns - Nothing.
+   */
   const onDeleteNoteClick = async (id: string) => {
+    // Ensure the ID is provided before attempting to delete the note.
     if (!id) return;
     try {
       await deleteNote(id);
       updateShouldRefreshNotes(true);
+      // display a success message to the user.
       toast({
         title: "Note supprimée avec succès.",
         status: "success",
@@ -25,6 +38,7 @@ function NotesList({ notes }: NotesProps) {
         isClosable: true,
       });
     } catch (error) {
+      // display an error message to the user.
       toast({
         title: "Oups.",
         description:
