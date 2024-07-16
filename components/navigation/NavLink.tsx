@@ -15,9 +15,9 @@ function NavLink({ url, title, icon, isActive }: NavLinkProps) {
     <Link href={url} aria-label={title}>
       <Flex gap={4} align="center">
         {React.cloneElement(icon, { isActive: isActive })}
-        <Text fontSize={16} fontWeight={600} lineHeight="19px">
+        {title !== '' && <Text fontSize={16} fontWeight={600} lineHeight="19px">
           {title}
-        </Text>
+        </Text>}
       </Flex>
     </Link>
   );

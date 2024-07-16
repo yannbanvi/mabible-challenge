@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ChakraProviders } from "./providers";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Show, Stack } from "@chakra-ui/react";
 import RightSidebar from "@/components/RightSidebar";
 import LeftNavigationSidebar from "@/components/navigation/LeftNavigationSidebar";
 import { NoteContextProvider } from "@/context/noteContext";
+import NavigationSectionForMobile from "@/components/navigation/NavigationSectionForMobile";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +20,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
       <NoteContextProvider>
         <body className={inter.className}>
           <ChakraProviders>
+            <Show above="md">
             <Flex 
               h='100vh'
               overflow='hidden'
@@ -31,11 +34,31 @@ export default function RootLayout({
               backgroundColor='#FAFAFB'
             >
               <LeftNavigationSidebar />
-              <Flex maxW='830px' grow={1}>
+              <Flex maxWidth={'830px'} width={{ base: '100%', sm: '100%', md: '1000px', lg: '830px', xl: '830px', '2xl': '830px' }} grow={1}>
                 {children}
               </Flex>
               <RightSidebar />
             </Flex>
+            </Show>
+            <Show below="sm">
+            <Flex 
+              h='100vh'
+              overflow='scroll'
+              justify='center'
+              direction='column'
+              backgroundColor='#FAFAFB'
+            >
+              <Flex 
+                maxWidth={'830px'} 
+                height={'500px'}
+                width={{ base: '100%', sm: '100%', md: '1000px', lg: '830px', xl: '830px', '2xl': '830px' }} grow={1}>
+                {children}
+              </Flex>
+              <NavigationSectionForMobile />
+            </Flex>
+            </Show>
+
+            
           </ChakraProviders>
         </body>
       </NoteContextProvider>

@@ -16,3 +16,4 @@ export { default as RechercheIcon } from "./Recherche";
 export { default as SignetIcon } from "./Signet";
 export { default as SupprimerIcon } from "./Supprimer";
 export { default as ThemeIcon } from "./Theme";
+export { default as MenuIcon } from "./Menu";

@@ -87,7 +87,6 @@ export async function fetchNotes() {
 }
 
 export async function searchNotes(searchQuery: string) {
-
   try {
     const response = await database.listDocuments(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID as string,

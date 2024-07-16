@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Hide, Show, Spacer, Text } from "@chakra-ui/react";
 import MaBibleLogo from "../icons/MaBibleLogo";
 import Link from "next/link";
 import {
@@ -138,38 +138,41 @@ const LeftNavigationSidebar = () => {
   );
 
   return (
-    <Flex
-      w="425px"
-      as="nav"
-      backgroundColor="#FAFAFB"
-      justify="end"
-      borderRight="2px solid #F1F1F2"
-    >
-      <Flex w="245px" h="100%" direction="column">
-        <Box paddingBlock="26px" paddingInline="23px">
-          <MaBibleLogo />
-        </Box>
-        {/* Navigation menu - first section */}
-        {< NavigationLinks navigationLinks={navigationLinksData.firstSection} />}
+    <Show above="md">
+      <Flex
+        w="425px"
+        as="nav"
+        backgroundColor="#FAFAFB"
+        justify="end"
+        borderRight="2px solid #F1F1F2"
 
-        <Divider color="#ECECEE" marginBlock="8px" />
+      >
+        <Flex w="245px" h="100%" direction="column">
+          <Box paddingBlock="26px" paddingInline="23px">
+            <MaBibleLogo />
+          </Box>
+          {/* Navigation menu - first section */}
+          {< NavigationLinks navigationLinks={navigationLinksData.firstSection} />}
 
-        {/* Navigation menu - second section */}
-        {< NavigationLinks navigationLinks={navigationLinksData.secondSection} title='Mes activités' />}
+          <Divider color="#ECECEE" marginBlock="8px" />
 
-        <Spacer flexGrow={1} />
+          {/* Navigation menu - second section */}
+          {< NavigationLinks navigationLinks={navigationLinksData.secondSection} title='Mes activités' />}
 
-        <Divider color="#ECECEE" />
+          <Spacer flexGrow={1} />
 
-        {/* User profile menu section */}
-        {renderUserProfileSection}
+          <Divider color="#ECECEE" />
 
-        <Divider color="#ECECEE" marginBlock="12px" />
+          {/* User profile menu section */}
+          {renderUserProfileSection}
 
-        {/* Bottom options section */}
-        {renderBottomOptionsSection}
+          <Divider color="#ECECEE" marginBlock="12px" />
+
+          {/* Bottom options section */}
+          {renderBottomOptionsSection}
+        </Flex>
       </Flex>
-    </Flex>
+    </Show>
   );
 };
 
