@@ -18,6 +18,7 @@ import {
 } from '@/components/icons'
 import NavigationLinks from "./NavigationLinks";
 
+// TODO: should refactor this
 const navigationLinksData = {
   firstSection: [
     {

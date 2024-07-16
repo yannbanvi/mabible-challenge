@@ -4,7 +4,15 @@ import ResizableTextarea from '../forms/ResizableTextarea'
 import { Flex } from '@chakra-ui/react'
 import { CreateTextareaSectionProps } from '@/interfaces/UiProps'
 
-function CreateTextareaSection({ inputValue, onBlur, onChange, sm}: CreateTextareaSectionProps) {
+{/** 
+* @component CreateTextareaSection
+  @Description A component for adding or editing a note body.
+  @param {string} inputValue - The current note body.
+  @param {function} onChange - A callback function to handle changes in the note body.
+  @param {boolean} sm - A boolean indicating if the component should be displayed in small mode.
+  @returns {JSX.Element} - The CreateTextareaSection component.
+*/}
+function CreateTextareaSection({ inputValue, onChange, sm}: CreateTextareaSectionProps) {
   return (
     <Flex
       paddingInline={sm ? "20px" : "32px"}
@@ -17,8 +25,7 @@ function CreateTextareaSection({ inputValue, onBlur, onChange, sm}: CreateTextar
     >
       <ResizableTextarea
         value={inputValue}
-        onBlur={(e) => onBlur(e, "body")}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
       />
     </Flex>
   )

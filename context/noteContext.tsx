@@ -32,15 +32,18 @@ export const NoteContextProvider = ({
   const [shouldRefreshNotes, setShouldRefreshNotes] = useState(false);
   const [selectedNote, setSelectedNote] = useState<NoteInterface | null>(null);
 
+  // update notes in the state
   const updateNotes = (newNotes: NoteInterface[]) => {
     setNotes(newNotes);
     setShouldRefreshNotes(false);
   };
 
+  // Define the selected note
   const selectNote = (note: NoteInterface) => {
     setSelectedNote(note);
   };
 
+  // This update the shouldRefreshNotes state which is used to trigger a re-render of the NotesList component
   const updateShouldRefreshNotes = (val: boolean) => {
     setShouldRefreshNotes(val);
   };

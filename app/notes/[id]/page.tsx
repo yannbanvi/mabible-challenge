@@ -9,9 +9,16 @@ const CreateOrEditNote = dynamic(() => import('@/components/notes/CreateOrEditNo
 })
 export default async function EditNote({ params }: { params: { id: string } }) {
     let note = {};
+    /**
+     * Fetch the note with the given ID
+     */
     try {
     note = await fetchNote(params?.id);
+    console.log('note:', note);
   } catch (error) {
+    /**
+     * If the note is not found, redirect to the notes list page
+     */
     redirect("/notes");
   }
   return <CreateOrEditNote note={note as NoteInterface} />;

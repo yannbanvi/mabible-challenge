@@ -21,6 +21,13 @@ import { NoteIcon, RechercheIcon } from "../icons";
 import NoNotesPlaceholder from "../NoNotesPlaceholder";
 import NotesList from "./NotesList";
 
+/**
+ * The Notes component is responsible for displaying the list of notes.
+ * It handles the search functionality, displaying the search input based on the screen size,
+ * and fetching the updated notes when the search query changes or when the `shouldRefreshNotes` flag is true.
+ * @component {Notes}
+ * @returns - The JSX component for the Notes page.
+ */
 export default function Notes() {
   const { updateNotes, notes, shouldRefreshNotes } = useNotes();
   const [showSearchInput, setShowSearchInput] = useState(false);
@@ -32,7 +39,7 @@ export default function Notes() {
 
   const [isPending, startTransition] = useTransition();
   let searchTimeout: string | number | NodeJS.Timeout | undefined;
-
+  // This method is used to add a query string to the current URL.
   const addQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -42,7 +49,7 @@ export default function Notes() {
     },
     [searchParams]
   );
-
+  // This method is used to the notes from the search query.
   const fetchSearchQuery = useCallback(async () => {
     try {
       startTransition(async () => {
@@ -54,6 +61,7 @@ export default function Notes() {
     }
   }, [query]);
 
+  // This method is used to handle the search input on focus and blur events.
   const searchInNotes = (event: React.FocusEvent<HTMLInputElement>) => {
     const searchQuery = event.target.value;
     if (searchQuery.trim() !== "" && searchQuery.trim().length < 3) return;
@@ -65,7 +73,7 @@ export default function Notes() {
       replace(`${pathname}?${params.toString()}`);
     }, 500);
   };
-
+  // Every time the search query changes, we fetch the updated notes.
   useLayoutEffect(() => {
     fetchSearchQuery();
   }, [shouldRefreshNotes, fetchSearchQuery]);

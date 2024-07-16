@@ -1,5 +1,6 @@
 import { NoteInterface } from "@/interfaces/UiProps";
 
+// This function will convert server data to client data
 export default function convertToNoteClientData(data: any): NoteInterface {
     return {
         $id: data?.$id,
